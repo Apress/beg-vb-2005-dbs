@@ -1,0 +1,10 @@
+use northwind
+go
+
+create table xmltest
+(
+   xid  int not null primary key,
+   xdoc xml not null
+)
+
+

@@ -1,0 +1,44 @@
+      ' Create connection      
+      Dim conn As SqlConnection = New SqlConnection( _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwnd" _
+      )
+
+      ' Create command
+      Dim cmd As SqlCommand = conn.CreateCommand()
+
+      ' Specify that a stored procedure is to be executed
+      cmd.CommandType = CommandType.StoredProcedure
+      cmd.CommandText = "sp_DbException_2"
+
+      Try
+         ' Open connection
+         conn.Open()
+
+         ' Execute stored procedure
+         cmd.ExecuteNonQuery()
+      Catch ex As System.Data.SqlClient.SqlException
+         Dim str As String = ""
+         For i As Integer = 0 To ex.Errors.Count - 1
+            str &= ControlChars.NewLine
+            str &= "Index # " & i
+            str &= ControlChars.NewLine
+            str &= "Exception: " & ex.Errors(i).ToString()
+            str &= ControlChars.NewLine
+            str &= "Number: " & ex.Errors(i).Number.ToString()
+            str &= ControlChars.NewLine
+         Next
+
+         MessageBox.Show(str, "Database Exception")
+      Catch ex As System.Exception
+         Dim str As String = "Source: " & ex.Source
+         str &= ControlChars.NewLine
+         str &= "Exception Message: " & ex.Message
+         MessageBox.Show(str, "General Exception")
+      Finally
+         If conn.State = ConnectionState.Open Then
+            MessageBox.Show("Finally block closing the connection", "Finally")
+            conn.Close()
+         End If
+      End Try

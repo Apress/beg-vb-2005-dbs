@@ -1,0 +1,27 @@
+using System.Data.SqlClient;
+
+
+
+
+         images.endImages();
+
+
+
+
+   Private img As Images
+
+
+
+
+      img.EndImages()
+
+
+
+
+
+      img.EndImages()
+      If disposing AndAlso components IsNot Nothing Then
+         components.Dispose()
+      End If
+      MyBase.Dispose(disposing)
+

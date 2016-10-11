@@ -1,0 +1,8 @@
+      img = New Images()
+      If img.GetRow() Then
+         Me.TextBox1.Text = img.GetFilename()
+         Me.PictureBox1.Image = CType(img.GetImage(), Image)
+      Else
+         Me.TextBox1.Text = "DONE"
+         Me.PictureBox1.Image = Nothing
+      End If

@@ -1,0 +1,15 @@
+Imports System.Data.SqlClient
+
+
+
+
+   Friend WithEvents conn As System.Data.SqlClient.SqlConnection
+
+
+
+
+
+
+
+
+

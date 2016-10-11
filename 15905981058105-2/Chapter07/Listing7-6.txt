@@ -1,0 +1,66 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+
+   Sub Main()
+      ' Set up connection string
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Set up first query
+      Dim sql1 As String = _
+           "select      " _
+         & "   companyname, " _
+         & "   contactname " _
+         & "from        " _
+         & "   customers " _
+         & "where " _
+         & "companyname like 'A%' "
+
+      ' Set up second query
+      Dim sql2 As String = _
+           "select      " _
+         & "   firstname, " _
+         & "   lastname " _
+         & "from        " _
+         & "   employees "
+
+      ' Combine queries
+      Dim sql As String = sql1 & sql2
+
+      ' Create connection
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      Try
+         ' Open connection
+         conn.Open()
+
+         ' Create command
+         Dim cmd As SqlCommand = New SqlCommand(sql, conn)
+
+         ' Create data reader
+         Dim rdr As SqlDataReader = cmd.ExecuteReader()
+
+         ' Loop through result sets
+         Do
+            While (rdr.Read())
+               Console.WriteLine("{0} : {1}", rdr(0), rdr(1))
+            End While
+            Console.WriteLine("".PadLeft(60, "="))
+         Loop While (rdr.NextResult())
+
+         ' Close data reader
+         rdr.Close()
+      Catch e As Exception
+         ' Display error
+         Console.WriteLine("Error: " & e.ToString)
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try
+   End Sub
+End Module

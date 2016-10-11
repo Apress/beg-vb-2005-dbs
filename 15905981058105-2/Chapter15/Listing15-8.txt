@@ -1,0 +1,43 @@
+      ' Create connection
+      conn = New SqlConnection( _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind" _
+      )
+
+      ' Create command
+      Dim cmd As SqlCommand = conn.CreateCommand()
+      cmd.CommandText = _
+           "select top 1 " _
+         & " customerid, " _
+         & " companyname " _
+         & "from " _
+         & "   customers "
+      cmd.Connection = conn
+
+      ' Add second StateChange handler
+      AddHandler conn.StateChange, AddressOf ConnStateChange2
+
+      Try
+         ' Clear list box
+         ListBox1.Items.Clear()
+
+         ' Open connection
+         conn.Open()
+
+         ' Create data reader
+         Dim rdr As SqlDataReader = cmd.ExecuteReader()
+
+         ' Display event log
+         While rdr.Read()
+            ListBox1.Items.Add(rdr.GetString(0))
+         End While
+      Catch ex As SqlException
+         MessageBox.Show(ex.Message)
+      Finally
+         ' Remove second StateChange handler
+         RemoveHandler conn.StateChange, AddressOf ConnStateChange2
+
+         ' Close connection
+         conn.Close()
+      End Try

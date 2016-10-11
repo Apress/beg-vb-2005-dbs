@@ -1,0 +1,26 @@
+use northwind
+go
+
+create procedure xml2tbl
+   @xdoc xml
+as
+   declare @xdocp int
+
+   exec sp_xml_preparedocument @xdocp output, @xdoc
+
+   select
+      sabbr,
+      sname,
+      cname
+   from
+      openxml(
+         @xdocp,
+         '/states/state/city',
+         0
+      )
+   with
+   (
+      sabbr char(2)     '../@abbr',
+      sname varchar(20) '../@name',
+      cname varchar(20) '@name'
+   )

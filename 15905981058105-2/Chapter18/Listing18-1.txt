@@ -1,0 +1,48 @@
+Module Module1
+
+   <Table()> _
+   Public Class Customers
+      <Column(Id:=True)> _
+      Public customerId As String
+      <Column()> _
+      Public companyName As String
+      <Column()> _
+      Public city As String
+      <Column()> _
+      Public country As String
+   End Class
+
+   Sub Main(ByVal args As String())
+
+      ' Connection string
+      Dim connString As String = _
+         "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Create data context 
+      Dim db As DataContext = New DataContext(connString)
+
+      ' Create typed table 
+      Dim customers As Table(Of Customers) = db.GetTable(Of Customers)()
+
+      ' Query database
+      Dim custs = _
+         From c In customers _
+         Select _
+            c
+
+      ' Display customers
+      For Each c In custs
+         Console.WriteLine( _
+            "{0} {1} {2} {3}", _
+            c.customerId, _
+            c.companyName, _
+            c.city, _
+            c.country _
+            )
+      Next
+
+   End Sub
+
+End Module

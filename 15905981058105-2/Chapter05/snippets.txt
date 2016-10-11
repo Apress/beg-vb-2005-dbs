@@ -1,0 +1,28 @@
+    Try
+        conn.Open() ' Open connection
+        '
+        ' Online processing (e.g., queries) here
+        '
+        conn.Close() ' Close connection
+
+        '
+        ' Offline processing here
+        '
+
+        conn.Open() ' Reopen connection
+        '
+        ' Online processing(e.g., INSERT/UPDATE/DELETE) here
+        '
+        conn.Close() ' Reclose connection
+    Finally
+        ' Close connection
+        conn.Close()
+    End Try
+
+
+
+
+    ' Create connection
+    Dim conn As SqlConnection = New SqlConnection( _
+       "server = (local)\netsdk;integrated security = sspi;" _
+       )

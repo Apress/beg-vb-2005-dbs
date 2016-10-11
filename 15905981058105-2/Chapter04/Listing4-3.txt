@@ -1,0 +1,56 @@
+Imports System
+Imports System.Data
+Imports System.Data.Odbc
+
+Module Module1
+
+   Sub Main()
+
+      ' Set up connection string
+      Dim connString As String = "dsn=northwindodbc"
+
+      ' Set up query string
+      Dim sql As String = _
+           "select      " _
+         & "    *       " _
+         & "from        " _
+         & "   employees"
+
+      ' Declare connection and data reader variables
+      Dim conn As OdbcConnection = Nothing
+      Dim rdr As OdbcDataReader = Nothing
+
+      Try
+         ' Open connection
+         conn = New OdbcConnection(connString)
+         conn.Open()
+
+         ' Execute query
+         Dim cmd As OdbcCommand = New OdbcCommand(sql, conn)
+         rdr = cmd.ExecuteReader()
+
+         ' Display output header
+         Console.WriteLine( _
+            "This program demonstrates the use of " _
+          & "the ODBC Data Provider." _
+          & ControlChars.NewLine _
+         )
+         Console.WriteLine("First Name    Last Name")
+
+         ' Process result set
+         While rdr.Read
+            Console.WriteLine( _
+               "{0} | {1}" _
+             , rdr("firstname").ToString().PadLeft(10) _
+             , rdr(1).ToString().PadLeft(10) _
+            )
+         End While
+      Catch e As Exception
+         Console.WriteLine("Error: " & e.ToString)
+      Finally
+         ' Close connection
+         rdr.Close()
+         conn.Close()
+      End Try
+   End Sub
+End Module

@@ -1,0 +1,38 @@
+create table test_Employees2
+   (
+   EmployeeID int          not null,
+   LastName   nvarchar(50) not null,
+   BirthDate  datetime     null
+   )
+
+
+
+
+drop table test_employees
+
+
+
+
+create table test_Employees
+   (
+   EmployeeID int          not null primary key,
+   LastName   nvarchar(50) not null,
+   BirthDate  datetime     null
+   )
+
+
+
+
+
+create table test_EmployeesResumes
+   (
+   EmployeeID int  not null primary key
+                            references test_employees,
+   Resume     text null
+   )
+
+
+
+
+
+

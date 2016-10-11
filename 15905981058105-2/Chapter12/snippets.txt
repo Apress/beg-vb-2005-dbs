@@ -1,0 +1,58 @@
+create procedure sp_Select_All_Employees
+as
+   select
+      employeeid,
+      firstname,
+      lastname
+   from
+      employees
+
+
+
+
+
+
+create procedure sp_Orders_By_EmployeeId
+   @employeeid int
+as
+   select
+      orderid,
+      customerid
+   from
+      orders
+   where
+      employeeid = @employeeid;
+
+
+
+
+
+
+create procedure sp_Orders_By_EmployeeId2
+   @employeeid int,
+   @ordercount int = 0 output
+as
+   select
+      orderid,
+      customerid
+   from
+      orders
+   where
+      employeeid = @employeeid;
+
+   select
+      @ordercount = count(*)
+   from
+      orders
+   where
+      employeeid = @employeeid
+
+   return @ordercount
+
+
+
+
+
+   order by
+      lastname,
+      firstname

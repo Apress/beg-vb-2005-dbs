@@ -1,0 +1,20 @@
+   ' Event handler for the InfoMessage Event
+   Private Sub ConnInfoMessage( _
+      ByVal sender As Object, _
+      ByVal e As SqlInfoMessageEventArgs _
+   ) _
+      Handles conn.InfoMessage
+
+      For Each err As SqlError In e.Errors
+         ListBox1.Items.Add("------------------------------")
+         ListBox1.Items.Add("Entering InfoMessage Event Handler")
+         ListBox1.Items.Add("Source = " + err.Source.ToString())
+         ListBox1.Items.Add("State = " + err.State.ToString())
+         ListBox1.Items.Add("Number = " + err.Number.ToString())
+         ListBox1.Items.Add("Procedure = " + err.Procedure)
+         ListBox1.Items.Add("Server = " + err.Server)
+         ListBox1.Items.Add("Message = " + err.Message)
+         ListBox1.Items.Add("Exiting InfoMessage Event Handler")
+         ListBox1.Items.Add("------------------------------")
+      Next
+   End Sub

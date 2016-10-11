@@ -1,0 +1,47 @@
+Module Module1
+
+   <Table(Name:="Customers")> _
+   Public Class Customers
+      <Column(Id:=True)> _
+      Public customerId As String
+      <Column()> _
+      Public companyName As String
+      <Column()> _
+      Public city As String
+      <Column()> _
+      Public country As String
+   End Class
+
+   Sub Main(ByVal args As String())
+
+      ' Connection string
+      Dim connString As String = _
+         "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Create data context 
+      Dim db As DataContext = New DataContext(connString)
+
+      ' Create typed table 
+      Dim customers As Table(Of Customers) = db.GetTable(Of Customers)()
+
+      ' Create dataset
+      Dim ds As DataSet = New DataSet()
+
+      ' Load typed table into dataset
+      ds.Tables.Add(customers.ToDataTable())
+
+      ' Query data table
+      Dim custs = _
+         From c In ds.Tables(0).ToQueryable() _
+         Select _
+            cid := c.Field(Of String)("customerid"), _
+            co := c.Field(Of String)("companyname")
+
+      ObjectDumper.Write(custs)
+
+   End Sub
+
+End Module
+

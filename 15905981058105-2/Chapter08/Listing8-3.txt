@@ -1,0 +1,59 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+
+   Sub Main()
+      ' Set up connection string
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Set up query
+      Dim sql As String = _
+           "select      " _
+         & "   contactname, " _
+         & "   country " _
+         & "from        " _
+         & "   customers "
+
+      ' Create connection
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      Try
+         ' Create data adapter
+         Dim da As SqlDataAdapter = New SqlDataAdapter(sql, conn)
+
+         ' Create and fill dataset
+         Dim ds As DataSet = New DataSet()
+         da.Fill(ds, "customers")
+
+         ' Get the data table reference
+         Dim dt As DataTable = ds.Tables("customers")
+
+         ' Create data view
+         Dim dv As DataView = New DataView( _
+               dt, _
+               "country = 'Germany'", _
+               "country", _
+               DataViewRowState.CurrentRows)
+
+
+         ' Display data from data view
+         For Each drv As DataRowView In dv
+            For i As Integer = 0 To dv.Table.Columns.Count - 1
+               Console.Write(drv(i).PadRight(20))
+            Next
+            Console.WriteLine()
+         Next
+      Catch e As Exception
+         ' Display error
+         Console.WriteLine("Error: " & e.ToString)
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try
+   End Sub
+End Module

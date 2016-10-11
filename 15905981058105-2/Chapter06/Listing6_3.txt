@@ -1,0 +1,51 @@
+
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+
+   Sub Main()
+      ' Set up connection string
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Set up query string
+      Dim sql As String = _
+           "select      " _
+         & "   firstname, " _
+         & "   lastname " _
+         & "from        " _
+         & "   employees"
+
+
+      ' Create connection
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      ' Create command
+      Dim cmd as SqlCommand = new SqlCommand(sql, conn)
+      Console.WriteLine("Command created and connected.")
+
+      Try
+         ' Open connection
+         conn.Open()
+
+         ' Execute query
+         Dim rdr as SqlDataReader = cmd.ExecuteReader()
+         While rdr.Read
+            Console.WriteLine( _
+               "Employee name: {0} {1}", _
+               rdr.GetValue(0), _
+               rdr.GetValue(1))
+         End While
+      Catch e As Exception
+         ' Display error
+         Console.WriteLine("Error: " & e.ToString)
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try
+   End Sub
+End Module

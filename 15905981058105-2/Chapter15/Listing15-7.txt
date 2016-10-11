@@ -1,0 +1,12 @@
+   'Handler for OnRowUpdating
+   Sub OnRowUpdating( _
+      ByVal sender As Object, _
+      ByVal e As SqlRowUpdatingEventArgs _
+   )
+      ListBox1.Items.Add("Entering OnRowUpdating Event Handler")
+      If Not e.Status = UpdateStatus.Continue Then
+         ListBox1.Items.Add( _
+            "RowStatus  = " & e.Status.ToString() _
+         )
+      End If
+   End Sub

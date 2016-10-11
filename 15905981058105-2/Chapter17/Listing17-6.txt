@@ -1,0 +1,17 @@
+declare @xdoc xml
+
+set @xdoc = '
+<states>
+   <state abbr="CA" name="California">
+      <city name="Berkeley"/>
+      <city name="Los Angeles"/>
+      <city name="Wilmington"/>
+   </state>
+   <state abbr="DE" name="Delaware">
+      <city name="Newark"/>
+      <city name="Wilmington"/>
+   </state>
+</states>
+'
+
+exec xml2tbl @xdoc

@@ -1,0 +1,11 @@
+select
+   s.abbr abbr,
+   s.name sname,
+   c.name cname
+from
+   xmlstate s
+   inner join
+   xmlcity c
+   on
+   s.abbr = c.sabbr
+for xml raw

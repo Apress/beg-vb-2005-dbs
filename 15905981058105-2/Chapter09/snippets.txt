@@ -1,0 +1,50 @@
+Imports System.Data.SqlClient
+
+
+
+
+
+      Dim newBind As Binding = New Binding("text", ds, "employees.firstname")
+      TextBox1.DataBindings.Add(newBind)
+
+
+
+
+      TextBox1.DataBindings.Add("text", ds, "employees.firstname")
+      TextBox2.DataBindings.Add("text", ds, "employees.firstname")
+
+
+
+
+
+Imports System.Data.SqlClient
+
+
+
+
+   ' Declare a binding manager field
+   Private bMgr As BindingManagerBase
+
+
+
+
+
+      ' Point to the next row and refresh the contents of the text box
+      bMgr.Position += 1
+
+
+
+
+
+      ' Point to the previous row and refresh the contents of the text box
+      bMgr.Position -= 1
+
+
+
+
+
+
+
+
+
+

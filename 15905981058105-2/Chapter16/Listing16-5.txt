@@ -1,0 +1,69 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+   Dim textChars() As Char = Nothing
+   Dim conn As SqlConnection = Nothing
+   Dim cmd As SqlCommand = Nothing
+   Dim dr As SqlDataReader = Nothing
+
+   Sub Main()
+      ' Create connection
+      conn = New SqlConnection( _
+          "data source = .\sqlexpress;" _
+        & "integrated security = true;" _
+        & "database = tempdb" _
+      )
+
+      ' Create command
+      cmd = New SqlCommand( _
+           "select " _
+         & "   textfile, " _
+         & "   textdata  " _
+         & "from         " _
+         & "   texttable " _
+         , conn _
+      )
+      Try
+         ' Open connection
+         conn.Open()
+
+         ' Create data reader
+         dr = cmd.ExecuteReader()
+
+         ' Retrieve text
+         ShowText()
+      Catch ex As SqlException
+         Console.WriteLine(ex.ToString())
+      Finally
+         endRetrieval()
+      End Try
+   End Sub
+
+   Sub ShowText()
+      Dim textSize As Long = 0
+      Dim bufferSize As Integer = 100
+      Dim charsRead As Long = 0
+      Dim textChars(bufferSize) As Char
+
+      If (dr.Read()) Then
+         textSize = dr.GetChars(1, 0, Nothing, 0, 0)
+         Console.WriteLine("--- size of file: {0} characters -----", _
+               textSize)
+         Console.WriteLine("--- first 100 characters of text -----")
+         charsRead = dr.GetChars(1, 0, textChars, 0, 100)
+         Console.WriteLine(New String(textChars))
+         Console.WriteLine("--- last 100 characters of text -----")
+         charsRead = dr.GetChars(1, textSize - 100, textChars, 0, 100)
+         Console.WriteLine(New String(textChars))
+         Console.WriteLine("------ end of text ------")
+      End If
+   End Sub
+
+   Sub endRetrieval()
+      ' Close the reader and the connection. 
+      dr.Close()
+      conn.Close()
+   End Sub
+End Module

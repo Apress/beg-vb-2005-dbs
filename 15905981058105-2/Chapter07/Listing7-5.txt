@@ -1,0 +1,57 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+
+   Sub Main()
+      ' Set up connection string
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Set up query
+      Dim sql As String = _
+           "select      " _
+         & "   * " _
+         & "from        " _
+         & "   employees "
+
+      ' Create connection
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      Try
+         ' Open connection
+         conn.Open()
+
+         ' Create command
+         Dim cmd As SqlCommand = New SqlCommand(sql, conn)
+
+         ' Create data reader
+         Dim rdr As SqlDataReader = cmd.ExecuteReader()
+
+         ' Store Employees schema in a data table
+         Dim schema As DataTable = rdr.GetSchemaTable()
+
+         ' Display info from each row in the data table.
+         ' Each row describes a column in the database table.
+         For Each row As DataRow In schema.Rows
+            For Each col As DataColumn In schema.Columns
+               Console.WriteLine( _
+                  col.ColumnName & " = " & row(col).ToString())
+            Next
+            Console.WriteLine("----------------")
+         Next
+
+         ' Close data reader
+         rdr.Close()
+      Catch e As Exception
+         ' Display error
+         Console.WriteLine("Error: " & e.ToString)
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try
+   End Sub
+End Module

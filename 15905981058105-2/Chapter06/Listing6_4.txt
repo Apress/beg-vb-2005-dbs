@@ -1,0 +1,77 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+
+   Sub Main()
+      ' Set up connection string
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Set up query
+      Dim sqlqry As String = _
+           "select      " _
+         & "   count(*) " _
+         & "from        " _
+         & "   employees"
+
+      ' Set up insert statement
+      Dim sqlins As String = _
+           "insert into employees " _
+         & "( " _
+         & "   firstname, " _
+         & "   lastname " _
+         & ") " _
+         & "values('Zachariah', 'Zinn')"
+
+      ' Set up delete statement
+      Dim sqldel As String = _
+           "delete from employees " _
+         & "where " _
+         & "   firstname = 'Zachariah' " _
+         & "   and " _
+         & "   lastname = 'Zinn' "
+
+      ' Create connection
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      ' Create commands
+      Dim cmdqry as SqlCommand = new SqlCommand(sqlqry, conn)
+      Dim cmdnon as SqlCommand = new SqlCommand(sqlins, conn)
+      Console.WriteLine("Command created and connected.")
+
+      Try
+         ' Open connection
+         conn.Open()
+
+         ' Execute query to get number of employees
+         Console.WriteLine( _
+             "Before INSERT: Number of employees = {0}", cmdqry.ExecuteScalar())
+
+         ' Execute nonquery to insert an employee
+         Console.WriteLine( _
+            "Executing statement " & cmdnon.CommandText)
+         cmdnon.ExecuteNonQuery()
+         Console.WriteLine( _
+            "After INSERT: Number of employees = " & cmdqry.ExecuteScalar())
+
+         ' Execute nonquery to delete an employee
+         cmdnon.CommandText = sqldel
+         Console.WriteLine( _
+            "Executing statement " & cmdnon.CommandText)
+         cmdnon.ExecuteNonQuery()
+         Console.WriteLine( _
+            "After DELETE: Number of employees = " & cmdqry.ExecuteScalar())
+      Catch e As Exception
+         ' Display error
+         Console.WriteLine("Error: " & e.ToString)
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try
+   End Sub
+End Module
+

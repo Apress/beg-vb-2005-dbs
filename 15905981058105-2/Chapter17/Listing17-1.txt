@@ -1,0 +1,44 @@
+use northwind
+go
+
+drop table xmlstate;
+
+drop table xmlcity;
+go
+
+create table xmlstate
+(
+   abbr char(2),
+   name varchar(20)
+)
+;
+
+create table xmlcity
+(
+   sabbr char(2),
+   name varchar(20)
+)
+;
+go
+
+insert into xmlstate values('CA', 'California');
+insert into xmlstate values('DE', 'Delaware');
+
+insert into xmlcity values('CA', 'Berkeley');
+insert into xmlcity values('CA', 'Los Angeles');
+insert into xmlcity values('CA', 'Wilmington');
+insert into xmlcity values('DE', 'Newark');
+insert into xmlcity values('DE', 'Wilmington');
+go
+
+select
+   s.abbr,
+   s.name,
+   c.name
+from
+   xmlstate s
+   inner join
+   xmlcity c
+   on
+   s.abbr = c.sabbr
+;

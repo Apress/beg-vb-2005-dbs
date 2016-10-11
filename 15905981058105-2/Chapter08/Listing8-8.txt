@@ -1,0 +1,68 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+
+   Sub Main()
+      ' Set up connection string
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Set up query
+      Dim qry As String = _
+           "select      " _
+         & "   * " _
+         & "from        " _
+         & "   employees " _
+         & "where " _
+         & "   country = 'UK' "
+
+      ' Create connection
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      Try
+         ' Create data adapter
+         Dim da As SqlDataAdapter = New SqlDataAdapter(qry, conn)
+
+         ' Create command builder
+         Dim cb As SqlCommandBuilder = New SqlCommandBuilder(da)
+
+         ' Create and fill dataset
+         Dim ds As DataSet = New DataSet()
+         da.Fill(ds, "employees")
+
+         ' Get the data table reference
+         Dim dt As DataTable = ds.Tables("employees")
+
+         ' Add a row
+         Dim newRow As DataRow = dt.NewRow()
+         newRow("firstname") = "Roy"
+         newRow("lastname") = "Beatty"
+         newRow("titleofcourtesy") = "Sir"
+         newRow("city") = "Birmingham"
+         newRow("country") = "UK"
+         dt.Rows.Add(newRow)
+
+         ' Display rows in data table
+         For Each row As DataRow In dt.Rows
+            Console.WriteLine( _
+               "{0} {1} {2}", _
+               row("firstname").ToString().PadRight(15), _
+               row("lastname").ToString().PadLeft(25), _
+               row("city"))
+         Next
+
+         ' Insert Employees
+         da.Update(ds, "employees")
+      Catch e As Exception
+         ' Display error
+         Console.WriteLine("Error: " & e.ToString)
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try
+   End Sub
+End Module

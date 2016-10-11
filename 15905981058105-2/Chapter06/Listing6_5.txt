@@ -1,0 +1,87 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+
+   Sub Main()
+      ' Set up rudimentary data
+      Dim fname As String = "Zachariah"
+      Dim lname As String = "Zinn"
+
+      ' Set up connection string
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Set up query
+      Dim sqlqry As String = _
+           "select      " _
+         & "   count(*) " _
+         & "from        " _
+         & "   employees"
+
+      ' Set up insert statement
+      Dim sqlins As String = _
+           "insert into employees " _
+         & "( " _
+         & "   firstname, " _
+         & "   lastname " _
+         & ") " _
+         & "values('@fname', '@lname')"
+
+      ' Set up delete statement
+      Dim sqldel As String = _
+           "delete from employees " _
+         & "where " _
+         & "   firstname = '@fname' " _
+         & "   and " _
+         & "   lastname = '@lname' "
+
+      ' Create connection
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      ' Create commands
+      Dim cmdqry As SqlCommand = New SqlCommand(sqlqry, conn)
+      Dim cmdnon As SqlCommand = New SqlCommand(sqlins, conn)
+      Console.WriteLine("Command created and connected.")
+
+      ' Add parameters to the command for executing statements
+      cmdnon.Parameters.Add("@fname", SqlDbType.NVarChar, 10)
+      cmdnon.Parameters.Add("@lname", SqlDbType.NVarChar, 20)
+
+      Try
+         ' Open connection
+         conn.Open()
+
+         ' Execute query to get number of employees
+         Console.WriteLine( _
+             "Before INSERT: Number of employees = " & cmdqry.ExecuteScalar())
+
+         ' Execute nonquery to insert an employee
+         cmdnon.Parameters("@fname").Value = fname
+         cmdnon.Parameters("@lname").Value = lname
+         Console.WriteLine( _
+            "Executing statement " & cmdnon.CommandText)
+         cmdnon.ExecuteNonQuery()
+         Console.WriteLine( _
+            "After INSERT: Number of employees = " & cmdqry.ExecuteScalar())
+
+         ' Execute nonquery to delete an employee
+         cmdnon.CommandText = sqldel
+         Console.WriteLine( _
+            "Executing statement {0}", cmdnon.CommandText)
+         cmdnon.ExecuteNonQuery()
+         Console.WriteLine( _
+            "After DELETE: Number of employees = " & cmdqry.ExecuteScalar())
+      Catch e As Exception
+         ' Display error
+         Console.WriteLine("Error: " & e.ToString)
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try
+   End Sub
+End Module
+

@@ -1,0 +1,119 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+Imports System.Data.SqlTypes
+Imports System.IO
+Module Module1
+   Dim fileName As String = _
+      "c:\bvb2005db\solutions\chapter16\loadtext\module1.vb"
+
+   Dim conn As SqlConnection = Nothing
+   Dim cmd As SqlCommand = Nothing
+
+   Sub Main()
+      Try
+         ' Get text file
+         GetTextFile(fileName)
+         ' Open connection
+         OpenConnection()
+         ' Create command
+         CreateCommand()
+         ' Create table
+         CreateTextTable()
+         ' Prepare insert command
+         PrepareInsertTextFile()
+         ' Load text file
+         ExecuteInsertTextFile(fileName)
+         Console.WriteLine( _
+            "Loaded {0} into texttable.", fileName _
+         )
+      Catch ex As SqlException
+         Console.WriteLine(ex.ToString())
+      Finally
+         CloseConnection()
+      End Try
+   End Sub
+
+   Sub CreateTextTable()
+      ExecuteCommand( _
+           " if exists " _
+         & " (         " _
+         & "    select " _
+         & "       *   " _
+         & "    from " _
+         & "       information_schema.tables " _
+         & "    where                        " _
+         & "       table_name = 'texttable'  " _
+         & " )                               " _
+         & "    drop table texttable         " _
+         )
+
+      ExecuteCommand( _
+           " create table texttable    " _
+         & "(                          " _
+         & "    textfile varchar(255), " _
+         & "    textdata varchar(max)  " _
+         & " ) " _
+      )
+   End Sub
+
+   Sub OpenConnection()
+      ' Create connection
+      conn = New SqlConnection( _
+           "data source = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = tempdb" _
+      )
+
+      ' Open connection
+      conn.Open()
+   End Sub
+
+   Sub CloseConnection()
+      ' Close connection
+      conn.Close()
+   End Sub
+
+   Sub CreateCommand()
+      cmd = New SqlCommand()
+      cmd.Connection = conn
+   End Sub
+
+   Sub ExecuteCommand(ByVal commandText As String)
+      cmd.CommandText = commandText
+      Console.WriteLine("Executing command:")
+      Console.WriteLine(cmd.CommandText)
+      Dim commandResult As Integer = cmd.ExecuteNonQuery()
+      Console.WriteLine("ExecuteNonQuery returns {0}.", commandResult)
+   End Sub
+
+   Sub PrepareInsertTextFile()
+      cmd.CommandText = _
+           "insert into texttable        " _
+         & "values (@textfile, @textdata)"
+      cmd.Parameters.Add("@textfile", SqlDbType.NVarChar, 30)
+      cmd.Parameters.Add("@textdata", SqlDbType.Text, 1000000)
+   End Sub
+
+   Sub ExecuteInsertTextFile(ByVal textFile As String)
+      Dim textData As String = GetTextFile(textFile)
+      cmd.Parameters("@textfile").Value = textFile
+      cmd.Parameters("@textdata").Value = textData
+      ExecuteCommand(cmd.CommandText)
+   End Sub
+
+   Function GetTextFile(ByVal textFile As String) As String
+      Console.WriteLine("Loading File: " + textFile)
+
+      Dim fs As New FileStream(textFile, FileMode.Open, FileAccess.Read)
+      Dim sr As StreamReader = New StreamReader(fs)
+      Dim textBytes As String = sr.ReadToEnd()
+
+      Console.WriteLine( _
+         "TextBytes has length {0} bytes.", _
+         textBytes.Length _
+      )
+
+      Return textBytes
+   End Function
+End Module

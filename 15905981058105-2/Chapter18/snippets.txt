@@ -1,0 +1,25 @@
+         Where _
+            c.country = "USA" _
+
+
+
+
+
+         Order By _
+            c.city
+
+
+
+
+         Order By _
+            c.city Descending
+
+
+
+
+
+      ObjectDumper.Write(custs)
+
+
+
+            c.city Descending

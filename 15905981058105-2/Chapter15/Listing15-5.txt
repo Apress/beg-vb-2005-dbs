@@ -1,0 +1,50 @@
+      ' Clear list box
+      ListBox1.Items.Clear()
+
+      ' Create connection
+      conn = New SqlConnection( _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind" _
+      )
+
+      Try
+         ' Open connection
+         conn.Open()
+
+         ' Create data adapter
+         Dim da As SqlDataAdapter = New SqlDataAdapter( _
+              "select       " _
+            & "   *         " _
+            & "from         " _
+            & "   customers ", _
+            conn _
+         )
+
+         ' Build command
+         Dim cd As SqlCommandBuilder = New SqlCommandBuilder(da)
+
+         ' Create and fill dataset (select only first row)
+         Dim ds As DataSet = New DataSet()
+         da.Fill(ds, 0, 1, "Customers")
+
+         ' Add handlers
+         AddHandler da.RowUpdating, AddressOf OnRowUpdating
+         AddHandler da.RowUpdated, AddressOf OnRowUpdated
+
+         ' Modify dataset
+         Dim dt As DataTable = ds.Tables("Customers")
+         dt.Rows(0)(1) = "The Volcano Corporation"
+
+         ' Update - this operation fires two events (RowUpdating/RowUpdated)
+         da.Update(ds, "Customers")
+
+         ' Remove handlers
+         RemoveHandler da.RowUpdating, AddressOf OnRowUpdating
+         RemoveHandler da.RowUpdated, AddressOf OnRowUpdated
+      Catch ex As SqlException
+         MessageBox.Show(ex.Message)
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try

@@ -1,0 +1,13 @@
+   ' Second Event handler for the StateChange Event
+   Private Sub ConnStateChange2( _
+      ByVal sender As Object, _
+      ByVal e As StateChangeEventArgs _
+   )
+      ListBox1.Items.Add("------------------------------")
+      ListBox1.Items.Add("Entering Second StateChange Event Handler")
+      ListBox1.Items.Add("Sender = " + sender.ToString())
+      ListBox1.Items.Add("Original State = " + e.OriginalState.ToString())
+      ListBox1.Items.Add("Current State = " + e.CurrentState.ToString())
+      ListBox1.Items.Add("Exiting Second StateChange Event Handler")
+      ListBox1.Items.Add("------------------------------")
+   End Sub

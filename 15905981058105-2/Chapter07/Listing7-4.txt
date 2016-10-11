@@ -1,0 +1,95 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+
+   Sub Main()
+      ' Set up connection string
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Set up query
+      Dim sql As String = _
+           "select      " _
+         & "   contactname, " _
+         & "   contacttitle " _
+         & "from        " _
+         & "   customers " _
+         & " where " _
+         & "    contactname like 'M%'"
+
+      ' Create connection
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      Try
+         ' Open connection
+         conn.Open()
+
+         ' Create command
+         Dim cmd As SqlCommand = New SqlCommand(sql, conn)
+
+         ' Create data reader
+         Dim rdr As SqlDataReader = cmd.ExecuteReader()
+
+         ' Get column names
+         Console.WriteLine( _
+            "Column Name:   {0}     {1}", _
+            rdr.GetName(0).PadRight(25), _
+            rdr.GetName(1) _
+         )
+
+         ' Get column data types
+         Console.WriteLine( _
+            "Data Type:     {0}     {1}", _
+            rdr.GetDataTypeName(0).PadRight(25), _
+            rdr.GetDataTypeName(1) _
+         )
+
+         Console.WriteLine()
+
+         ' Loop through result set
+         While rdr.Read
+            Console.WriteLine( _
+               "               {0}     {1}", _
+               rdr.GetString(0).PadRight(25), _
+               rdr.GetString(1) _
+            )
+         End While
+
+         ' Get number of columns
+         Console.WriteLine()
+         Console.WriteLine( _
+            "Number of columns in a row: {0}", _
+            rdr.FieldCount _
+         )
+
+         ' Get info about each column 
+         Console.WriteLine( _
+            "'{0}' is at index {1} and its type is: {2}", _
+            rdr.GetName(0), _
+            rdr.GetOrdinal("contactname"), _
+            rdr.GetFieldType(0) _
+         )
+
+         Console.WriteLine( _
+            "'{0}' is at index {1} and its type is: {2}", _
+            rdr.GetName(1), _
+            rdr.GetOrdinal("contacttitle"), _
+            rdr.GetFieldType(1) _
+         )
+
+
+         ' Close data reader
+         rdr.Close()
+      Catch e As Exception
+         ' Display error
+         Console.WriteLine("Error: " & e.ToString)
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try
+   End Sub
+End Module

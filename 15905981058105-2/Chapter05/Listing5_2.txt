@@ -1,0 +1,45 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+
+    Sub Main()
+        ' Set up connection string
+        Dim connString As String = _
+             "server = .\sqlexpress;" _
+           & "integrated security = true;"
+
+        ' Create connection
+        Dim conn As SqlConnection = New SqlConnection(connString)
+
+        Try
+            ' Open connection
+            conn.Open()
+            Console.WriteLine("Connection opened.")
+
+            ' Display connection properties
+            Console.WriteLine("Connection Properties:")
+            Console.WriteLine( _
+               "   Connection String: " & conn.ConnectionString)
+            Console.WriteLine( _
+               "   Database: " & conn.Database)
+            Console.WriteLine( _
+               "   DataSource: " & conn.DataSource)
+            Console.WriteLine( _
+               "   ServerVersion: ", conn.ServerVersion)
+            Console.WriteLine( _
+               "   State: " & conn.State)
+            Console.WriteLine( _
+               "   WorkstationId: " & conn.WorkstationId)
+        Catch e As Exception
+            ' Display error
+            Console.WriteLine("Error: " & e.ToString)
+        Finally
+            ' Close connection
+            conn.Close()
+            Console.WriteLine("Connection closed.")
+        End Try
+    End Sub
+
+End Module

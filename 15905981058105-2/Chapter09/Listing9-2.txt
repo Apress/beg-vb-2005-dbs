@@ -1,0 +1,21 @@
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      Dim sql As String = _
+           "select " _
+         & "   * " _
+         & "from " _
+         & "employees"
+
+      Dim conn As SqlConnection = New SqlConnection(connString)
+      Dim da As SqlDataAdapter = New SqlDataAdapter(sql, conn)
+      da.Fill(DataSet1, "employees")
+
+      ' Bind text boxes to data columns
+      TextBox1.DataBindings.Add("text", DataSet1, "employees.firstname")
+      TextBox2.DataBindings.Add("text", DataSet1, "employees.lastname")
+
+      ' Create the binding manager (CurrencyManager)
+      bMgr = MyBase.BindingContext(DataSet1, "employees")

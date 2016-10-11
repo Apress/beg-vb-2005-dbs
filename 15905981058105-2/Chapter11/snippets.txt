@@ -1,0 +1,245 @@
+select
+   productid
+from
+   "order details"
+
+
+
+
+
+select distinct
+   productid
+from
+   "order details"
+
+
+
+
+
+select
+   *
+from
+   orders
+where
+   employeeid in (1, 6)
+order by
+   employeeid
+
+
+
+
+
+select
+   *
+from
+   orders
+where
+   employeeid not in (1, 6)
+order by
+   employeeid
+
+
+
+
+
+select
+   *
+from
+   employees
+where
+   substring(lastname, 1, 1) in ('D', 'S')
+
+
+
+
+
+select
+   orderid       'Order ID',
+   sum(quantity) 'Total Quantity Ordered'
+from
+   "order details"
+group by
+   orderid
+
+
+
+
+
+select
+   productid     'Product ID',
+   min(quantity) 'Minimum',
+   max(quantity) 'Maximum',
+   avg(quantity) 'Average'
+from
+   "order details"
+group by
+   productid
+order by
+   productid
+
+
+
+
+
+
+
+
+
+
+select distinct
+   year(orderdate) NumYear,
+   case year(orderdate)
+      when 1998 then
+        'Last year'
+      else
+        'Prior year'
+   end LabYear
+from
+   orders
+
+
+
+
+
+select distinct
+   year(orderdate) NumYear,
+   case year(orderdate)
+      when 1998 then
+         str(year(orderdate))
+      else
+         case year(orderdate)
+            when 1997 then
+               'Prior'
+            else
+               'Earlier'
+         end
+   end LabYear
+from
+   orders
+
+
+
+
+
+select distinct
+   year(orderdate) NumYear,
+   case
+      when
+         year(orderdate) =
+            (
+            select
+                max(year(orderdate))
+            from
+               orders
+            )
+      then
+        'Last year'
+      else
+        'Prior year'
+   end LabYear
+from
+   orders
+
+
+
+
+
+select
+   orders.orderid,
+   orders.customerid,
+   employees.lastname
+from
+   orders inner join employees
+   on
+   orders.employeeid = employees.employeeid
+
+
+
+
+
+select
+   o.orderid,
+   o.customerid,
+   e.lastname
+from
+   orders o inner join employees e
+   on
+   o.employeeid = e.employeeid
+
+
+
+
+
+select
+   o.orderid    OrderID,
+   o.customerid CustomerID,
+   e.lastname   Employee
+from
+   orders o join employees e
+   on
+   o.employeeid = e.employeeid
+
+
+
+
+
+select
+   o.orderid    OrderID,
+   o.customerid CustomerID,
+   e.lastname   Employee
+from
+   orders o, employees e
+   where
+      o.employeeid = e.employeeid
+
+
+
+
+
+
+select
+   o.orderid     OrderID,
+   c.companyname CustomerName,
+   e.lastname    Employee
+from
+   orders o
+   inner join
+   employees e
+   on
+      o.employeeid = e.employeeid
+   inner join
+   customers c
+   on
+      o.customerid = c.customerid
+
+
+
+
+
+insert into employees
+(
+   firstname,
+   lastname
+)
+values ('Amy', 'Abrams')
+
+
+
+
+
+select
+   e.firstname,
+   e.lastname,
+   o.orderid
+from
+   employees e
+   left outer join
+   orders o
+   on
+   e.employeeid = o.employeeid
+order by
+   2, 1
+
+
+
+

@@ -1,0 +1,62 @@
+         ' Connect command to connection
+         cmd.Connection = conn
+         Console.WriteLine("Connected command to this connection.")
+
+
+
+
+
+         ' Associate SQL with command
+         cmd.CommandText = _
+              "select " _
+            & "   count(*) " _
+            & "from " _
+            & "   employees"
+         Console.WriteLine( _
+            "Ready to execute SQL: " & cmd.CommandText)
+
+
+
+
+
+         ' Create a command with both text and connection
+         Dim sql = _
+              "select " _
+            & "   count(*) " _
+            & "from " _
+            & "   employees"
+
+         cmd = new SqlCommand(sql, conn)
+
+
+
+
+
+        Dim count As Integer = CType(cmd.ExecuteScalar(), Integer)
+        Console.WriteLine("Number of Employees is: " & count)
+
+
+
+
+      Dim fname As String = "Zachariah"
+      Dim lname As String = "Zinn"
+      Dim vals As String = "('" + fname + "'," + "'" + lname + "')"
+      Dim sqlins As String = _
+           "insert into employees" _
+         & "( " _
+         & "  firstname, " _
+         & "   lastname " _
+         & ") " _
+         & "values" + vals
+
+
+
+
+
+         cmdnon.Prepare();
+
+
+
+
+
+

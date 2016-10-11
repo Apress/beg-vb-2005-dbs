@@ -1,0 +1,65 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+Imports System.Drawing
+Imports System.IO
+
+Public Class Images
+
+   Dim imageFilename As String = ""
+   Dim imageBytes() As Byte = Nothing
+   Dim imageConnection As SqlConnection = Nothing
+   Dim imageCommand As SqlCommand = Nothing
+   Dim imageReader As SqlDataReader = Nothing
+
+   ' Constructor
+   Sub New()
+      imageConnection = New SqlConnection( _
+           "server = .\sqlexpress; " _
+         & "integrated security = True; " _
+         & "database = tempdb " _
+      )
+      imageCommand = New SqlCommand( _
+           "select        " _
+         & "   imagefile, " _
+         & "   imagedata  " _
+         & "from          " _
+         & "   imagetable " _
+         & "order by      " _
+         & "   imagefile  ", _
+         imageConnection _
+      )
+
+      ' Open connection and create data reader
+      imageConnection.Open()
+      imageReader = imageCommand.ExecuteReader()
+   End Sub
+
+   Function GetImage() As Bitmap
+      Dim ms As MemoryStream = New MemoryStream(imageBytes)
+      Dim bmap As Bitmap = New Bitmap(ms)
+
+      Return bmap
+   End Function
+
+   Function GetFilename() As String
+      Return imageFilename
+   End Function
+
+   Function GetRow() As Boolean
+      If (imageReader.Read()) Then
+         imageFilename = imageReader.GetValue(0).ToString()
+         imageBytes = CType(imageReader.GetValue(1), Byte())
+         Return True
+      Else
+         Return False
+      End If
+   End Function
+
+   Sub EndImages()
+      ' Close the reader and the connection.
+      imageReader.Close()
+      imageConnection.Close()
+   End Sub
+
+End Class

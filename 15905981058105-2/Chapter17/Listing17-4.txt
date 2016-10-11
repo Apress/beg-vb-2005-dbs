@@ -1,0 +1,11 @@
+select
+   state.abbr abbr,
+   state.name sname,
+   city.name cname
+from
+   xmlstate state
+   inner join
+   xmlcity city
+   on
+   state.abbr = city.sabbr
+for xml auto, root('states')

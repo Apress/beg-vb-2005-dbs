@@ -1,0 +1,91 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+
+   Sub Main()
+      ' Set up connection string
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Set up first query
+      Dim sql1 As String = _
+           "select      " _
+         & "   * " _
+         & "from        " _
+         & "   customers "
+
+      ' Set up second query
+      Dim sql2 As String = _
+           "select      " _
+         & "   *  " _
+         & "from        " _
+         & "   products " _
+         & "where " _
+         & "   unitprice < 10 "
+
+      'Combine queries
+      Dim sql As String = sql1 & sql2
+
+      ' Create connection
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      Try
+         ' Create data adapter
+         Dim da As SqlDataAdapter = New SqlDataAdapter(sql, conn)
+
+         ' Create and fill dataset
+         Dim ds As DataSet = New DataSet()
+         da.Fill(ds, "customers")
+
+         ' Get the data tables collection
+         Dim dtc As DataTableCollection = ds.Tables
+
+         ' Display data from first table
+         '
+         ' Display header
+         Console.WriteLine("Results from Customers table:")
+         Console.WriteLine( _
+               "CompanyName".PadRight(20) & "ContactName".PadLeft(19))
+         '
+         ' Set display filter
+         Dim fl As String = "country = 'Germany'"
+         '
+         ' Set sort
+         Dim srt As String = "companyname asc"
+         '
+         ' Display filtered and sorted data
+         For Each row As DataRow In dtc("customers").Select(fl, srt)
+            Console.WriteLine( _
+               "{0}   {1}", _
+               row("companyname").ToString().PadRight(25), _
+               row("contactname"))
+         Next
+
+         ' Display data from second table
+         '
+         ' Display header
+         Console.WriteLine("-----------------------------------------")
+         Console.WriteLine("Results from Products table:")
+         Console.WriteLine( _
+               "ProductName".PadRight(20) & "UnitPrice".PadLeft(27))
+         '
+         ' Display  data
+         For Each row As DataRow In dtc(1).Rows
+            Console.WriteLine( _
+               "{0}   {1}", _
+               row("productname").ToString().PadRight(35), _
+               row("unitprice"))
+         Next
+      Catch e As Exception
+         ' Display error
+         Console.WriteLine("Error: " & e.ToString)
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try
+   End Sub
+End Module

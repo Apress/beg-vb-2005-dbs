@@ -1,0 +1,55 @@
+Imports System.Data.SqlClient
+
+Module Module1
+
+   '<Table(Name:="Customers")> _
+   'Public Class Customers
+   '   <Column(Id:=True)> _
+   '   Public customerId As String
+   '   <Column()> _
+   '   Public companyName As String
+   '   <Column()> _
+   '   Public city As String
+   '   <Column()> _
+   '   Public country As String
+   'End Class
+
+   Sub Main(ByVal args As String())
+
+      ' Connection string
+      Dim connString As String = _
+         "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Create connection 
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      ' Create dataset
+      Dim ds As TypedCustomers = New TypedCustomers()
+
+      ' Create data adapter 
+      Dim da As SqlDataAdapter = New SqlDataAdapter( _
+           "select " _
+         & "   *   " _
+         & "from   " _
+         & "   customers " _
+         , conn)
+
+      ' Fill data table
+      da.Fill(ds, "Customers")
+
+      ' Query data table
+      Dim custs = _
+         From c In ds.Customers _
+         Select _
+            c.customerid, _
+            c.companyname
+
+      ObjectDumper.Write(custs)
+
+   End Sub
+
+End Module
+
+

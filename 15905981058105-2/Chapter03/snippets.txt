@@ -1,0 +1,86 @@
+select
+   *
+from
+   employees
+
+
+
+
+
+select
+   employeeid,
+   firstname,
+   lastname
+from
+   employees
+
+
+
+
+
+where
+   country = 'USA'
+
+
+
+
+
+select
+   orderid,
+   employeeid,
+   customerid,
+   orderdate,
+   shipcountry
+from
+   orders
+where
+   employeeid = 5
+   and
+   shipcountry in ('Brazil', 'France')
+order by
+   shipcountry asc,
+   orderdate asc
+
+
+
+
+
+insert into shippers
+(
+   companyname,
+   phone
+)
+values ('We Shred Them Before You Get Them', '555-1234')
+
+
+
+
+
+update shippers
+set
+   companyname = 'Speed of Light Delivery'
+where
+   shipperid = 4
+
+
+
+
+
+update shippers
+set
+   companyname = 'Speed of Light Delivery',
+   phone = '555-9876'
+where
+   shipperid = 4
+
+
+
+
+
+delete from shippers
+where shipperid = 4
+
+
+
+
+

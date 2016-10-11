@@ -1,0 +1,44 @@
+Imports System.Data.SqlClient
+
+
+
+
+
+      cmd.CommandText = "sp_Select_No_Employees"
+
+
+
+
+
+create procedure sp_DbException_1
+as
+   set nocount on
+
+   declare @ordercount int
+
+   select
+      @ordercount = count(*)
+   from
+      orders
+
+   if @ordercount > 10
+      raiserror (
+         'Orders Count is greater than 10 - Notify the Business Manager',
+         16,
+         1
+      )
+
+
+
+
+
+create procedure sp_DbException_2
+as
+   set nocount on
+
+   insert into employees
+   (
+      employeeid,
+      firstname
+   )
+   values (50, 'Cinderella')

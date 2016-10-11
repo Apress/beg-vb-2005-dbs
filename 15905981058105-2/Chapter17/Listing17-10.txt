@@ -1,0 +1,10 @@
+declare @xdoc xml
+
+   select
+      @xdoc = xdoc
+   from
+      xmltest
+   where
+      xid = 2
+
+exec xml2tbl @xdoc

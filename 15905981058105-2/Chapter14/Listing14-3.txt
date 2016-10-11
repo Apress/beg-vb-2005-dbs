@@ -1,0 +1,70 @@
+      Dim connString As String = _
+           "data source = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      ' INSERT statement
+      Dim sqlins As String = _
+              "insert into customers " _
+            & "( " _
+            & "   customerid, " _
+            & "   companyname " _
+            & ") " _
+            & "values(@newcustid, @newconame) "
+
+      ' DELETE statement
+      Dim sqldel As String = _
+           "delete from customers " _
+         & "where " _
+         & "   customerid = @oldcustid "
+
+      ' Open connection
+      conn.Open()
+
+      ' Begin transaction
+      Dim sqltrans As SqlTransaction = conn.BeginTransaction()
+
+      Try
+         ' Create insert command
+         Dim cmdins As SqlCommand = conn.CreateCommand()
+         cmdins.CommandText = sqlins
+         cmdins.Transaction = sqltrans
+         cmdins.Parameters.Add("@newcustid", SqlDbType.NVarChar, 5)
+         cmdins.Parameters.Add("@newconame", SqlDbType.NVarChar, 30)
+
+         ' Create delete command
+         Dim cmddel As SqlCommand = conn.CreateCommand()
+         cmddel.CommandText = sqldel
+         cmddel.Transaction = sqltrans
+         cmddel.Parameters.Add("@oldcustid", SqlDbType.NVarChar, 5)
+
+         ' Add customer
+         cmdins.Parameters("@newcustid").Value = TextBox1.Text
+         cmdins.Parameters("@newconame").Value = TextBox2.Text
+         cmdins.ExecuteNonQuery()
+
+         ' Delete customer
+         cmddel.Parameters("@oldcustid").Value = TextBox3.Text
+         cmddel.ExecuteNonQuery()
+
+         ' Commit transaction
+         sqltrans.Commit()
+
+         ' No exception, transaction committed, give message
+         MessageBox.Show("Transaction committed")
+      Catch ex As System.Data.SqlClient.SqlException
+         ' Roll back transaction
+         sqltrans.Rollback()
+
+         MessageBox.Show( _
+            "Transaction rolled back: " + ex.Message, _
+            "Rollback Transaction" _
+         )
+      Catch ex As System.Exception
+         MessageBox.Show("System Error: " + ex.Message, "Error")
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try

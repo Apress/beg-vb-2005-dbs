@@ -1,0 +1,19 @@
+use northwind
+go
+
+create procedure xml2edge
+   @xdoc xml
+as
+   declare @xdocp int
+
+   exec sp_xml_preparedocument @xdocp output, @xdoc
+
+   select
+      *
+   from
+      openxml(
+         @xdocp,
+         '/states/state/city',
+         0
+      )
+

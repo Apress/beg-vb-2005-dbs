@@ -1,0 +1,37 @@
+      ' Create connection      
+      conn = New SqlConnection( _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind" _
+      )
+
+      ' Create command
+      Dim cmd As SqlCommand = conn.CreateCommand()
+      cmd.CommandText = _
+           "select top 1 " _
+         & " customerid, " _
+         & " companyname " _
+         & "from " _
+         & "   customers "
+      cmd.Connection = conn
+
+      Try
+         ' Clear list box
+         ListBox1.Items.Clear()
+
+         ' Open connection - ConnStateChange event will be fired
+         conn.Open()
+
+         ' Create data reader
+         Dim rdr As SqlDataReader = cmd.ExecuteReader()
+
+         ' Display rows in list box
+         While rdr.Read()
+            ListBox1.Items.Add(rdr.GetString(0) & "-" & rdr.GetString(1))
+         End While
+      Catch e1 As SqlException
+         MessageBox.Show(e1.Message)
+      Finally
+         '  Close connection - ConnStateChange event will be fired
+         conn.Close()
+      End Try

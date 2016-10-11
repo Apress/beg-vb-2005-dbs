@@ -1,0 +1,8 @@
+   'Handler for OnRowUpdated
+   Sub OnRowUpdated( _
+      ByVal sender As Object, _
+      ByVal e As SqlRowUpdatedEventArgs _
+   )
+      ListBox1.Items.Add("Entering OnRowUpdated Event Handler")
+      ListBox1.Items.Add("Rows Affected  = " & e.RowCount.ToString())
+   End Sub

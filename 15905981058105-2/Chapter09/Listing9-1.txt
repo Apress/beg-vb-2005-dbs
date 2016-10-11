@@ -1,0 +1,20 @@
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      Dim sql As String = _
+           "select " _
+         & "   * " _
+         & "from " _
+         & "employees"
+
+      Dim conn As SqlConnection = New SqlConnection(connString)
+      Dim da As SqlDataAdapter = New SqlDataAdapter(sql, conn)
+      Dim ds As DataSet = New DataSet()
+      da.Fill(ds, "employees")
+
+      ' Bind to FirstName column of the Employees table
+      TextBox1.DataBindings.Add("text", ds, "employees.firstname")
+      ' Bind to LastName column of the Employees table
+      TextBox2.DataBindings.Add("text", ds, "employees.lastname")

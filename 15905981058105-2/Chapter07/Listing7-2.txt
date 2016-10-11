@@ -1,0 +1,67 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+
+   Sub Main()
+      ' Set up connection string
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Set up query
+      Dim sql As String = _
+           "select      " _
+         & "   companyname, " _
+         & "   contactname " _
+         & "from        " _
+         & "   customers " _
+         & "where " _
+         & "   contactname like 'M%' "
+
+      ' Create connection
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      Try
+         ' Open connection
+         conn.Open()
+
+         ' Create command
+         Dim cmd As SqlCommand = New SqlCommand(sql, conn)
+
+         ' Create data reader
+         Dim rdr As SqlDataReader = cmd.ExecuteReader()
+
+         ' Print headings
+         Console.WriteLine( _
+            "   {0}   {1}", _
+            "Company Name".PadRight(25), _
+            "Contact Name".PadRight(20))
+
+         Console.WriteLine( _
+            "   {0}   {1}", _
+            "============".PadRight(25), _
+            "============".PadRight(20))
+
+
+         ' Loop through result set
+         While rdr.Read
+            Console.WriteLine( _
+               " {0} | {1}", _
+               rdr(0).ToString().PadLeft(25), _
+               rdr(1).ToString().PadLeft(20))
+         End While
+
+         ' Close data reader
+         rdr.Close()
+      Catch e As Exception
+         ' Display error
+         Console.WriteLine("Error: " & e.ToString)
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try
+   End Sub
+End Module

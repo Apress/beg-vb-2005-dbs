@@ -1,0 +1,91 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+
+   Sub Main()
+      ' Set up connection string
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Set up query
+      Dim qry As String = _
+           "select      " _
+         & "   * " _
+         & "from        " _
+         & "   employees " _
+         & "where " _
+         & "   country = 'UK' "
+
+      ' Set up DML
+      Dim upd As String = _
+           "update employees " _
+         & "set " _
+         & "   city = @city " _
+         & "where " _
+         & "   employeeid = @employeeid "
+
+      ' Create connection
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      Try
+         ' Create data adapter
+         Dim da As SqlDataAdapter = New SqlDataAdapter(qry, conn)
+
+         ' Create and fill dataset
+         Dim ds As DataSet = New DataSet()
+         da.Fill(ds, "employees")
+
+         ' Get the data table reference
+         Dim dt As DataTable = ds.Tables("employees")
+
+         ' Modify City in first row
+         dt.Rows(0)("city") = "Wilmington"
+
+         ' Display rows in data table
+         For Each row As DataRow In dt.Rows
+            Console.WriteLine( _
+               "{0} {1} {2}", _
+               row("firstname").ToString().PadRight(15), _
+               row("lastname").ToString().PadLeft(25), _
+               row("city"))
+         Next
+
+         ' Update Employees
+         '
+         ' Create command
+         Dim cmd As SqlCommand = New SqlCommand(upd, conn)
+         '
+         ' Map parameters
+         '
+         ' City
+         cmd.Parameters.Add( _
+            "@city", _
+            SqlDbType.NVarChar, _
+            15, _
+            "city")
+         '
+         ' EmployeeID
+         Dim parm As SqlParameter = _
+            cmd.Parameters.Add( _
+               "@employeeid", _
+               SqlDbType.Int, _
+               4, _
+               "employeeid")
+         parm.SourceVersion = DataRowVersion.Original
+         '
+         ' Update database
+         da.UpdateCommand = cmd
+         da.Update(ds, "employees")
+      Catch e As Exception
+         ' Display error
+         Console.WriteLine("Error: " & e.ToString)
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try
+   End Sub
+End Module

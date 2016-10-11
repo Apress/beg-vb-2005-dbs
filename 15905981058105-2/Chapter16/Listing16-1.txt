@@ -1,0 +1,121 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+Imports System.IO
+
+Module Module1
+
+   Dim imageFileLocation As String = _
+       "C:\Program Files\Microsoft.NET\SDK\v2.0\QuickStart\" _
+     & "aspnet\samples\monitoring\tracing\Images\"
+   Dim imageFilePrefix As String = "milk"
+   Dim numberImageFiles As Integer = 8
+   Dim imageFileType As String = ".gif"
+   Dim maxImageSize As Integer = 10000
+   Dim conn As SqlConnection = Nothing
+   Dim cmd As SqlCommand = Nothing
+
+   Sub Main()
+
+      Try
+         ' Open connection
+         OpenConnection()
+         ' Create command
+         CreateCommand()
+         ' Create table
+         CreateImageTable()
+         ' Prepare insert
+         PrepareInsertImages()
+         ' Insert images
+         For i As Integer = 1 To numberImageFiles
+            ExecuteInsertImages(i)
+         Next
+      Catch ex As SqlException
+         Console.WriteLine(ex.ToString())
+      Finally
+         CloseConnection()
+      End Try
+   End Sub
+
+   Sub OpenConnection()
+      ' Create connection
+      conn = New SqlConnection( _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = tempdb" _
+      )
+      ' Open connection
+      conn.Open()
+   End Sub
+
+   Sub CloseConnection()
+      ' Close connection
+      conn.Close()
+      Console.WriteLine("Connection Closed.")
+   End Sub
+
+   Sub CreateCommand()
+      cmd = New SqlCommand()
+      cmd.Connection = conn
+   End Sub
+
+   Sub ExecuteCommand(ByVal cmdText As String)
+      cmd.CommandText = cmdText
+      Console.WriteLine("Executing command:")
+      Console.WriteLine(cmd.CommandText)
+      Dim cmdResult As Integer = cmd.ExecuteNonQuery()
+      Console.WriteLine("ExecuteNonQuery returns {0}.", cmdResult)
+   End Sub
+
+   Sub CreateImageTable()
+      ExecuteCommand( _
+           "create table imagetable " _
+         & "( " _
+         & "   imagefile nvarchar(20), " _
+         & "   imagedata varbinary(max) " _
+         & ") " _
+      )
+   End Sub
+
+   Sub PrepareInsertImages()
+      cmd.CommandText = _
+           " insert into imagetable " _
+         & "values (@imagefile, @imagedata)"
+      cmd.Parameters.Add("@imagefile", SqlDbType.NVarChar, 20)
+      cmd.Parameters.Add("@imagedata", SqlDbType.Image, 1000000)
+
+      cmd.Prepare()
+   End Sub
+
+   Sub ExecuteInsertImages(ByVal imageFileNumber As Integer)
+      Dim imageFileName As String = _
+         imageFilePrefix & imageFileNumber.ToString() & imageFileType
+      Dim imageImageData() As Byte = _
+          LoadImageFile(imageFileName, imageFileLocation, maxImageSize)
+
+      cmd.Parameters("@imagefile").Value = imageFileName
+      cmd.Parameters("@imagedata").Value = imageImageData
+
+      ExecuteCommand(cmd.CommandText)
+   End Sub
+
+   Function LoadImageFile( _
+         ByVal fileName As String, _
+         ByVal fileLocation As String, _
+         ByVal maxImageSize As Integer _
+      ) As Byte()
+      Dim fullpath As String = fileLocation + fileName
+      Console.WriteLine("Loading File:")
+      Console.WriteLine(fullpath)
+      Dim fs As New FileStream(fullpath, FileMode.Open, FileAccess.Read)
+      Dim br As New BinaryReader(fs)
+      Dim imagebytes() As Byte = br.ReadBytes(maxImageSize)
+
+      Console.WriteLine( _
+         "Imagebytes has length {0} bytes.", _
+         imagebytes.GetLength(0))
+
+      Return imagebytes
+   End Function
+
+End Module

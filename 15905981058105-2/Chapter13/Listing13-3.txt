@@ -1,0 +1,49 @@
+      ' Create connection      
+      Dim conn As SqlConnection = New SqlConnection( _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind" _
+      )
+
+      ' Create command
+      Dim cmd As SqlCommand = conn.CreateCommand()
+
+      ' Specify that a stored procedure is to be executed
+      cmd.CommandType = CommandType.StoredProcedure
+      cmd.CommandText = "sp_Select_All_Employees"
+
+      Try
+         ' Open connection
+         conn.Open()
+
+         ' Create data reader
+         Dim rdr As SqlDataReader = cmd.ExecuteReader()
+
+         ' Access nonexistent column
+         Dim str As String = rdr.GetValue(20).ToString()
+
+         ' Close reader
+         rdr.Close()
+      Catch ex As System.InvalidOperationException
+         Dim str As String = "Source: " & ex.Source
+         str &= ControlChars.NewLine
+         str &= "Message: " & ex.Message
+         str &= ControlChars.NewLine & ControlChars.NewLine
+         str &= "Stack Trace: " & ex.StackTrace
+         MessageBox.Show(str, "Specific Exception")
+      Catch ex As System.Data.SqlClient.SqlException
+         Dim str As String = "Source: " & ex.Source
+         str &= ControlChars.NewLine
+         str &= "Exception Message: " & ex.Message
+         MessageBox.Show(str, "Database Exception")
+      Catch ex As System.Exception
+         Dim str As String = "Source: " & ex.Source
+         str &= ControlChars.NewLine
+         str &= "Exception Message: " & ex.Message
+         MessageBox.Show(str, "Non-Database Exception")
+      Finally
+         If conn.State = ConnectionState.Open Then
+            MessageBox.Show("Finally block closing the connection", "Finally")
+            conn.Close()
+         End If
+      End Try

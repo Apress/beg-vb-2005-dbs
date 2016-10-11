@@ -1,0 +1,51 @@
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+
+Module Module1
+
+   Sub Main()
+      ' Set up connection string
+      Dim connString As String = _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind"
+
+      ' Create connection
+      Dim conn As SqlConnection = New SqlConnection(connString)
+
+      Try
+         ' Open connection
+         conn.Open()
+
+         ' Create command
+         Dim cmd As SqlCommand = conn.CreateCommand()
+
+         ' Specify stored procedure to execute
+         cmd.CommandType = CommandType.StoredProcedure
+         cmd.CommandText = "sp_select_all_employees"
+
+         ' Execute command
+         Dim rdr As SqlDataReader = cmd.ExecuteReader()
+
+         ' Loop through result set
+         While rdr.Read
+            Console.WriteLine( _
+               "{0} {1} {2}", _
+               rdr(0).ToString().PadRight(5), _
+               rdr(1).ToString(), _
+               rdr(2).ToString() _
+            )
+         End While
+
+         ' Close data reader
+         rdr.Close()
+      Catch e As Exception
+         ' Display error
+         Console.WriteLine("Error: " & e.ToString)
+      Finally
+         ' Close connection
+         conn.Close()
+      End Try
+   End Sub
+End Module

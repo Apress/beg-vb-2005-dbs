@@ -1,0 +1,28 @@
+      ' Create connection      
+      Dim conn As SqlConnection = New SqlCOnnection( _
+           "server = .\sqlexpress;" _
+         & "integrated security = true;" _
+         & "database = northwind" _
+      )
+
+      ' Create command
+      Dim cmd As SqlCommand = conn.CreateCommand()
+
+      ' Specify that a stored procedure is to be executed
+      cmd.CommandType = CommandType.StoredProcedure
+
+      ' Deliberately fail to specify the procedure
+      ' cmd.CommandText = "sp_Select_All_Employees"
+
+      ' Open connection
+      conn.Open()
+      ' Create data reader
+      Dim rdr As SqlDataReader = cmd.ExecuteReader()
+      ' Close reader
+      rdr.Close()
+
+      If conn.State = ConnectionState.Open Then
+         MessageBox.Show("Finally block closing the connection", "Finally")
+         conn.Close()
+      End If
+
